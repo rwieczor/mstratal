@@ -13,3 +13,5 @@ Imports:
     nloptr,
     stratallo
 RoxygenNote: 7.3.1
+URL: https://github.com/rwieczor/mstratal
+BugReports: https://github.com/rwieczor/mstratal/issues
