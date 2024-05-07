@@ -301,7 +301,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #' Lednicki, Wieczorkowski (2003),  Friedrich et al. (2015), and
 #' Wesolowski, Wieczorkowski, Wojciak (2024)
 #'
-#' @param xx - matrix with stratified numerical variables (in columns)
+#' @param xx - matrix or data.frame with stratified numerical variables (in columns)
 #' @param L - number of strata
 #' @param cc - vector with given coefficients of variation for stratified variables
 #'
