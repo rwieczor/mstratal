@@ -318,22 +318,27 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'         power in cumulative power density rule (default 0.1)
 #' @param p_max - maximal value for search of optimal value of
 #'         power in cumulative power density rule (default 0.9)
-#' @param maxit1 - maximal number of iteration at first step of stratification, where
-#'    optimal value of power in cumulative power density rule is found
+#' @param maxit1 - maximal number of iteration at first step of stratification,
+#'    where optimal value of power in cumulative power density rule is found
+#'    (default 20)
 #' @param maxit2 - maximal number of iteration in second step of stratification, where
-#'    Nelder-Mead or subplex algorithm for minimization of objective function is used
+#'    Nelder-Mead or subplex algorithm for minimization of objective function
+#'    (default 100)
 #'
 #' @param rel_tol - relative tolerance, used as stopping rule in using sequentially
-#'       selected optimization alorithm
+#'       selected optimization alorithm (default 0.01)
 #' @param min_size - minimal sample size in strata (default 2)
 #' @param verbose - if TRUE then diagnostic output is printed
 #' @param history - if TRUE then output contains list of sample sizes
 #' from consecutive generations of algorithm
 #'
-#' @return list with data frame with columns of strata boundaries for stratification variables (bh1,bh2,...)
-#'   and corresponding sample allocation (nh) in obtained strata;
+#' @return list with two or three elements:
+#' bh - data frame with columns of strata boundaries for stratification
+#' variables (bh1,bh2,...),
+#' nh - corresponding sample allocation in obtained strata;
 #'   if parameter 'history' is set to TRUE then output have additional
-#'   vector 'n_history' with sample sizes obtained in the process of optimization.
+#'   element - vector 'n_history' with sample sizes obtained in the process
+#'   of optimization.
 #'
 #' @references
 #' - Lednicki B., Wieczorkowski R., Optimal stratification and sample
@@ -376,6 +381,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'   history = TRUE
 #' )
 #' ex
+#' sum(ex$nh) # total sample size
 #' # Plot for optimization history
 #' n_history <- ex$n_history
 #' plot(n_history,cex=0.5,
@@ -387,11 +393,14 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'
 
 mstratal <- function(xx, L, cc,
-                     method = "capacity",
+                     method = "rnabox",
                      opt_alg = "subplex",
-                     p_min = 0.1, p_max = 0.9,
-                     maxit1 = 10, maxit2 = 100,
-                     rel_tol = 0.01, min_size = 2,
+                     p_min = 0.1,
+                     p_max = 0.9,
+                     maxit1 = 20,
+                     maxit2 = 100,
+                     rel_tol = 0.01,
+                     min_size = 2,
                      verbose = TRUE,
                      history = FALSE) {
   ndim <- ncol(xx)
@@ -425,6 +434,7 @@ mstratal <- function(xx, L, cc,
         sum(al_nh(gr, xx, L, cc, method = method, min_size = min_size))
       },
       # method = method0,
+
       lower = rep(p_min, ndim), upper = rep(p_max, ndim),
       # control = list(maxit = maxit1)
       control = list(maxeval = maxit1)
@@ -518,11 +528,11 @@ mstratal <- function(xx, L, cc,
 
   bh <- data.frame(bh)
   names(bh) <- paste0("bh", 1:ndim)
-  bh <- cbind(bh, nh = nhopt)
+  #bh <- cbind(bh, nh = nhopt)
 
   if (history) {
-    return(list(bh = bh, n_history = n_history))
+    return(list(bh = bh, nh=nhopt, n_history = n_history))
   } else {
-    return(list(bh = bh))
+    return(list(bh = bh, nh=nhopt))
   }
 }

@@ -8,11 +8,11 @@ mstratal(
   xx,
   L,
   cc,
-  method = "capacity",
+  method = "rnabox",
   opt_alg = "subplex",
   p_min = 0.1,
   p_max = 0.9,
-  maxit1 = 10,
+  maxit1 = 20,
   maxit2 = 100,
   rel_tol = 0.01,
   min_size = 2,
@@ -21,7 +21,7 @@ mstratal(
 )
 }
 \arguments{
-\item{xx}{- matrix with stratified numerical variables (in columns)}
+\item{xx}{- matrix or data.frame with stratified numerical variables (in columns)}
 
 \item{L}{- number of strata}
 
@@ -43,14 +43,16 @@ power in cumulative power density rule (default 0.1)}
 \item{p_max}{- maximal value for search of optimal value of
 power in cumulative power density rule (default 0.9)}
 
-\item{maxit1}{- maximal number of iteration at first step of stratification, where
-optimal value of power in cumulative power density rule is found}
+\item{maxit1}{- maximal number of iteration at first step of stratification,
+where optimal value of power in cumulative power density rule is found
+(default 20)}
 
 \item{maxit2}{- maximal number of iteration in second step of stratification, where
-Nelder-Mead or subplex algorithm for minimization of objective function is used}
+Nelder-Mead or subplex algorithm for minimization of objective function
+(default 100)}
 
 \item{rel_tol}{- relative tolerance, used as stopping rule in using sequentially
-selected optimization alorithm}
+selected optimization alorithm (default 0.01)}
 
 \item{min_size}{- minimal sample size in strata (default 2)}
 
@@ -60,10 +62,13 @@ selected optimization alorithm}
 from consecutive generations of algorithm}
 }
 \value{
-list with data frame with columns of strata boundaries for stratification variables (bh1,bh2,...)
-  and corresponding sample allocation (nh) in obtained strata;
+list with two or three elements:
+bh - data frame with columns of strata boundaries for stratification
+variables (bh1,bh2,...),
+nh - corresponding sample allocation in obtained strata;
   if parameter 'history' is set to TRUE then output have additional
-  vector 'n_history' with sample sizes obtained in the process of optimization.
+  element - vector 'n_history' with sample sizes obtained in the process
+  of optimization.
 }
 \description{
 Function for optimal stratification and allocation of multivariate population.
@@ -98,6 +103,7 @@ ex <- mstratal(cbind(x, y), L, c(c, c),
   history = TRUE
 )
 ex
+sum(ex$nh) # total sample size
 # Plot for optimization history
 n_history <- ex$n_history
 plot(n_history,cex=0.5,
