@@ -81,16 +81,8 @@ rnabox2 <- function(V0, Nh, Sh, mh = NULL, Mh = NULL) {
 #' @export
 #'
 cumfp <- function(x, L, p) {
-  # eps<-1e-6
-  # hst<-hist(log(x+eps),plot=FALSE,nclass=nclass.FD)
   hst <- hist(x, plot = FALSE, nclass = nclass.FD)
 
-  # require(KernSmooth)
-  # x1<-log(eps+x)
-  # h <- dpih(x1)
-  # bins <- seq(min(x1)-h, max(x1)+h, by=h)
-  # hst<-hist(x1, breaks=bins)
-  #
   mids <- hst$mids
   fy <- hst$dens
 
@@ -113,7 +105,6 @@ cumfp <- function(x, L, p) {
     # cat("xi gri",xi," ",gr[i],"\n")
   }
 
-  # gr<-exp(gr)-eps
   return(gr)
 }
 
@@ -164,7 +155,7 @@ cumfp <- function(x, L, p) {
 #' y <- exp(y)
 #' cor(x, y)
 #' #
-#' dataxy <- cbind(x,y) # data matrix
+#' dataxy <- cbind(x, y) # data matrix
 #' L <- 3 # number of strata
 #' cv <- 0.05 # coefficient of variation for estimators
 #' boundaries <- c(cumfp(dataxy[, 1], L, 0.5), cumfp(dataxy[, 2], L, 0.5))
@@ -266,7 +257,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
     # cat("i: V0= ",i,":",V0," Nh= ",Nh,"  S2 = ",S2h[,i+1]," lo.str= ",lo.str,"\n")
     if (method == "capacity") {
       nh[, i] <- stratallo:::CapacityScaling2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh)
-    } else if (method == "rnabox") nh[, i] <- stratallo::ran_round(rnabox2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh))
+    } else if (method == "rnabox") nh[, i] <- stratallo::round_oric(rnabox2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh))
   }
   nh <- apply(nh, 1, max)
   n <- sum(nh)
@@ -384,10 +375,12 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #' sum(ex$nh) # total sample size
 #' # Plot for optimization history
 #' n_history <- ex$n_history
-#' plot(n_history,cex=0.5,
-#'      ylim=c(min(n_history)-10,max(n_history)))
+#' plot(n_history,
+#'   cex = 0.5,
+#'   ylim = c(min(n_history) - 10, max(n_history))
+#' )
 #' lines(n_history)
-#' abline(h=min(n_history),col=3)
+#' abline(h = min(n_history), col = 3)
 #'
 #' @export
 #'
@@ -397,7 +390,7 @@ mstratal <- function(xx, L, cc,
                      opt_alg = "subplex",
                      p_min = 0.1,
                      p_max = 0.9,
-                     maxit1 = 20,
+                     maxit1 = 100,
                      maxit2 = 100,
                      rel_tol = 0.01,
                      min_size = 2,
@@ -409,7 +402,7 @@ mstratal <- function(xx, L, cc,
   # upper<-NULL ;for (i in 1:ndim) upper[(1+(i-1)*(L-1)):(i*(L-1))]<-quantile(xx[,i],0.99)
 
   # method used in optimization for cumulative power rule
-  #if (ndim == 1) method0 <- "Brent" else method0 <- "Nelder-Mead"
+  # if (ndim == 1) method0 <- "Brent" else method0 <- "Nelder-Mead"
 
   p0 <- rep(0.5, ndim)
   if (verbose) cat("Initial powers in cumulative rule = ", p0, "\n")
@@ -434,7 +427,6 @@ mstratal <- function(xx, L, cc,
         sum(al_nh(gr, xx, L, cc, method = method, min_size = min_size))
       },
       # method = method0,
-
       lower = rep(p_min, ndim), upper = rep(p_max, ndim),
       # control = list(maxit = maxit1)
       control = list(maxeval = maxit1)
@@ -528,11 +520,11 @@ mstratal <- function(xx, L, cc,
 
   bh <- data.frame(bh)
   names(bh) <- paste0("bh", 1:ndim)
-  #bh <- cbind(bh, nh = nhopt)
+  # bh <- cbind(bh, nh = nhopt)
 
   if (history) {
-    return(list(bh = bh, nh=nhopt, n_history = n_history))
+    return(list(bh = bh, nh = nhopt, n_history = n_history))
   } else {
-    return(list(bh = bh, nh=nhopt))
+    return(list(bh = bh, nh = nhopt))
   }
 }

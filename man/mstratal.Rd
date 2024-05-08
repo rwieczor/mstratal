@@ -12,7 +12,7 @@ mstratal(
   opt_alg = "subplex",
   p_min = 0.1,
   p_max = 0.9,
-  maxit1 = 20,
+  maxit1 = 100,
   maxit2 = 100,
   rel_tol = 0.01,
   min_size = 2,
@@ -106,10 +106,12 @@ ex
 sum(ex$nh) # total sample size
 # Plot for optimization history
 n_history <- ex$n_history
-plot(n_history,cex=0.5,
-     ylim=c(min(n_history)-10,max(n_history)))
+plot(n_history,
+  cex = 0.5,
+  ylim = c(min(n_history) - 10, max(n_history))
+)
 lines(n_history)
-abline(h=min(n_history),col=3)
+abline(h = min(n_history), col = 3)
 
 }
 \references{

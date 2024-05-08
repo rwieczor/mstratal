@@ -48,7 +48,7 @@ x <- exp(x)
 y <- exp(y)
 cor(x, y)
 #
-dataxy <- cbind(x,y) # data matrix
+dataxy <- cbind(x, y) # data matrix
 L <- 3 # number of strata
 cv <- 0.05 # coefficient of variation for estimators
 boundaries <- c(cumfp(dataxy[, 1], L, 0.5), cumfp(dataxy[, 2], L, 0.5))
