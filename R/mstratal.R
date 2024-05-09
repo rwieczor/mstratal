@@ -330,8 +330,8 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #' @param history - if TRUE then output contains list of sample sizes
 #' from consecutive generations of algorithm
 #'
-#' @return list with data frame with columns of strata boundaries for stratification variables (bh1,bh2,...)
-#'   and corresponding sample allocation (nh) in obtained strata;
+#' @return list with elements: bh - data frame with columns of strata boundaries for stratification variables (bh1,bh2,...),
+#'   and nh - corresponding sample allocation in obtained strata;
 #'   if parameter 'history' is set to TRUE then output have additional
 #'   vector 'n_history' with sample sizes obtained in the process of optimization.
 #'
@@ -390,8 +390,10 @@ mstratal <- function(xx, L, cc,
                      method = "capacity",
                      opt_alg = "subplex",
                      p_min = 0.1, p_max = 0.9,
-                     maxit1 = 10, maxit2 = 100,
-                     rel_tol = 0.01, min_size = 2,
+                     maxit1 = 50, 
+                     maxit2 = 100,
+                     rel_tol = 0.01, 
+                     min_size = 2,
                      verbose = TRUE,
                      history = FALSE) {
   ndim <- ncol(xx)
@@ -518,11 +520,11 @@ mstratal <- function(xx, L, cc,
 
   bh <- data.frame(bh)
   names(bh) <- paste0("bh", 1:ndim)
-  bh <- cbind(bh, nh = nhopt)
+  #bh <- cbind(bh, nh = nhopt)
 
   if (history) {
-    return(list(bh = bh, n_history = n_history))
+    return(list(bh = bh, nh = nhopt, n_history = n_history))
   } else {
-    return(list(bh = bh))
+    return(list(bh = bh, nh = nhopt))
   }
 }
