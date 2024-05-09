@@ -12,7 +12,7 @@ mstratal(
   opt_alg = "subplex",
   p_min = 0.1,
   p_max = 0.9,
-  maxit1 = 100,
+  maxit1 = 50,
   maxit2 = 100,
   rel_tol = 0.01,
   min_size = 2,
@@ -62,10 +62,8 @@ selected optimization alorithm (default 0.01)}
 from consecutive generations of algorithm}
 }
 \value{
-list with two or three elements:
-bh - data frame with columns of strata boundaries for stratification
-variables (bh1,bh2,...),
-nh - corresponding sample allocation in obtained strata;
+list with elements: bh - data frame with columns of strata boundaries for stratification variables (bh1,bh2,...),
+  and nh - corresponding sample allocation in obtained strata;
   if parameter 'history' is set to TRUE then output have additional
   element - vector 'n_history' with sample sizes obtained in the process
   of optimization.
