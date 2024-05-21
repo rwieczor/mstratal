@@ -261,7 +261,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
     # cat("i: V0= ",i,":",V0," Nh= ",Nh,"  S2 = ",S2h[,i+1]," lo.str= ",lo.str,"\n")
     if (method == "capacity") {
       nh[, i] <- stratallo:::CapacityScaling2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh)
-    } else if (method == "rnabox") nh[, i] <- stratallo::ran_round(rnabox2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh))
+    } else if (method == "rnabox") nh[, i] <- stratallo::round_oric(rnabox2(V0, Nh, sqrt(S2h[, i + 1]), lo.str, Nh))
   }
   nh <- apply(nh, 1, max)
   n <- sum(nh)
