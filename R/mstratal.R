@@ -124,7 +124,8 @@ cumfp <- function(x, L, p) {
 #'    Neyman optimal allocation formula taking into account lower an upper bounds for
 #'    sample sizes in strata; method 'capacity' uses integer optimal allocation
 #'    'CapacityScaling' algorithm from Friedrich et al. (2015) paper
-#' @param min_size - minimal sample size in strata (default 2)
+#' @param min_size - minimal sample size in strata (default 2); if min_size < 1 then minimal 
+#'     sample fraction in strata
 #'
 #' @return numerical vector with optimal sample allocation in strata
 #' defined by input boundaries;
@@ -244,12 +245,15 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 
 
   nh <- matrix(0, L, ndim)
-
+  
   lo.str <- rep(min_size, L)
-  # lo.str <- round(0.005*Nh) # condition for minimal sample fraction in strata
+  if (min_size < 1) {
+    # condition for minimal sample fraction in strata
+    lo.str <- ound(min_size*Nh)
+  }
+  lo.str <- pmin(pmax(2,lo.str),Nh)
   lo.str[L] <- Nh[L]
-  lo.str <- pmin(lo.str, Nh)
-
+  
   if (any(is.na(S2h))) {
     return(rep(big_nh, L))
   }
@@ -302,10 +306,10 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'
 #' @param method - string parameter, choice of algorithm for optimal allocation with given
 #'    strata and box constraints (generalization of Neyman allocation),
-#'    default metod="capacity" i.e. algoritm "Capacity Scaling"
-#'    from the paper Friedrich, Münnich, Vries, Wagner (2015),
-#'    other parameter could be method="rnabox", which uses algorithm "RNABOX"
-#'    from the paper Wesolowski, Wieczorkowski, Wojciak (2024).
+#'    default metod="rnabox", which uses algorithm "RNABOX"
+#'    from the paper Wesolowski, Wieczorkowski, Wojciak (2024),
+#'    other parameter could be metod="capacity" i.e. algoritm "Capacity Scaling"
+#'    from the paper Friedrich, Münnich, Vries, Wagner (2015).
 #'
 #' @param opt_alg - string parameter, choice of algorithm for numerical optimization
 #'   can be: simplex for Nelder-Mead simplex, or 'sublpex' for subplex algorithm
@@ -315,14 +319,15 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'         power in cumulative power density rule (default 0.9)
 #' @param maxit1 - maximal number of iteration at first step of stratification,
 #'    where optimal value of power in cumulative power density rule is found
-#'    (default 20)
+#'    (default 10)
 #' @param maxit2 - maximal number of iteration in second step of stratification, where
 #'    Nelder-Mead or subplex algorithm for minimization of objective function
 #'    (default 100)
 #'
 #' @param rel_tol - relative tolerance, used as stopping rule in using sequentially
 #'       selected optimization alorithm (default 0.01)
-#' @param min_size - minimal sample size in strata (default 2)
+#' @param min_size - minimal sample size in strata (default 2), if min_size < 1 then
+#'    minimal sample fraction in strata
 #' @param verbose - if TRUE then diagnostic output is printed
 #' @param history - if TRUE then output contains list of sample sizes
 #' from consecutive generations of algorithm
@@ -391,7 +396,7 @@ mstratal <- function(xx, L, cc,
                      method = "rnabox",
                      opt_alg = "subplex",
                      p_min = 0.1, p_max = 0.9,
-                     maxit1 = 50,
+                     maxit1 = 10,
                      maxit2 = 100,
                      rel_tol = 0.01,
                      min_size = 2,
