@@ -249,7 +249,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   lo.str <- rep(min_size, L)
   if (min_size < 1) {
     # condition for minimal sample fraction in strata
-    lo.str <- ound(min_size*Nh)
+    lo.str <- round(min_size*Nh)
   }
   lo.str <- pmin(pmax(2,lo.str),Nh)
   lo.str[L] <- Nh[L]
