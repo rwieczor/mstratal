@@ -124,7 +124,7 @@ cumfp <- function(x, L, p) {
 #'    Neyman optimal allocation formula taking into account lower an upper bounds for
 #'    sample sizes in strata; method 'capacity' uses integer optimal allocation
 #'    'CapacityScaling' algorithm from Friedrich et al. (2015) paper
-#' @param min_size - minimal sample size in strata (default 2); if min_size < 1 then minimal 
+#' @param min_size - minimal sample size in strata (default 2); if min_size < 1 then minimal
 #'     sample fraction in strata
 #'
 #' @return numerical vector with optimal sample allocation in strata
@@ -245,7 +245,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 
 
   nh <- matrix(0, L, ndim)
-  
+
   lo.str <- rep(min_size, L)
   if (min_size < 1) {
     # condition for minimal sample fraction in strata
@@ -253,7 +253,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   }
   lo.str <- pmin(pmax(2,lo.str),Nh)
   lo.str[L] <- Nh[L]
-  
+
   if (any(is.na(S2h))) {
     return(rep(big_nh, L))
   }
@@ -317,10 +317,10 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #'         power in cumulative power density rule (default 0.1)
 #' @param p_max - maximal value for search of optimal value of
 #'         power in cumulative power density rule (default 0.9)
-#' @param maxit1 - maximal number of iteration at first step of stratification,
+#' @param maxit1 - maximal number of iterations at first step of stratification,
 #'    where optimal value of power in cumulative power density rule is found
 #'    (default 10)
-#' @param maxit2 - maximal number of iteration in second step of stratification, where
+#' @param maxit2 - maximal number of iterations in second step of stratification, where
 #'    Nelder-Mead or subplex algorithm for minimization of objective function
 #'    (default 100)
 #'
