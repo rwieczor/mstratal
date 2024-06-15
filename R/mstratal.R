@@ -498,13 +498,16 @@ mstratal <- function(xx, L, cc,
     if (history) n_history <- c(n_history, sum(nhopt))
   } else if (opt_alg == "subplex") {
     while (1) {
-      # gropt<-subplex::subplex(gr0,function(z) {
       gropt <- nloptr::sbplx(gr0, function(z) {
         sum(al_nh(z, xx, L, cc, method = method, min_size = min_size))
       },
       lower = lower, upper = upper,
-      # control=list(maxit= maxit2)
       control = list(maxeval = maxit2)
+      # gropt <- subplex::subplex(gr0, function(z) {
+      #    sum(al_nh(z, xx, L, cc, method = method, min_size = min_size))
+      #  },
+      # hessian = TRUE,
+      # control = list(maxit = maxit2)
       )$par
 
       # gropt<-sort(gropt)
