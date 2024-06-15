@@ -402,6 +402,9 @@ mstratal <- function(xx, L, cc,
                      min_size = 2,
                      verbose = TRUE,
                      history = FALSE) {
+
+  xx <- apply(xx,2,as.double)
+
   ndim <- ncol(xx)
 
   lower <- NULL
