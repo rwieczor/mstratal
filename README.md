@@ -28,9 +28,9 @@ library(mstratal)
 
 ## Generation of correlated lognormal variables (x,y)
 set.seed(3456)
-ro <- 0.5 # correlation coefficient for lognormal vaiables
+ro <- 0.5 # correlation coefficient for lognormal variables
 #
-# correlation coefficient for normal vaiables (theoretical formula)
+# correlation coefficient for normal variables (theoretical formula)
 (ro_norm <- log(.5 * (exp(1) - 1) + 1))
 #> [1] 0.6201145
 ```
