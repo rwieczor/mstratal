@@ -1,0 +1,73 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# mstratal - Multivariate optimal stratification and allocation for stratified sampling scheme.
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Package can be used for computation of multivariate optimal stratification and allocation in stratified sampling. New numerical method is implemented for determination of the strata boundaries given the number of strata and target precision of estimation.
+
+
+## Installation
+
+You can install the development version of mstratal from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("rwieczor/mstratal")
+```
+
+## Example of solving bi-variate stratification and allocation problem
+
+```{r example}
+library(mstratal)
+
+## Generation of correlated lognormal variables (x,y)
+set.seed(3456)
+ro <- 0.5 # correlation coefficient for lognormal vaiables
+#
+# correlation coefficient for normal vaiables (theoretical formula)
+(ro_norm <- log(.5 * (exp(1) - 1) + 1))
+#
+x <- rnorm(10000)
+z <- rnorm(10000)
+y <- x * ro_norm + z * sqrt(1 - ro_norm^2)
+x <- exp(x)
+y <- exp(y)
+cor(x, y)
+#
+L <- 5
+c <- 0.01
+
+ex <- mstratal(cbind(x, y), L, c(c, c),
+  opt_alg = "simplex",
+  maxit1 = 20, maxit2 = 100, rel_tol = 0.01,
+  verbose = TRUE,
+  history = TRUE
+)
+ex
+sum(ex$nh) # total sample size
+# Plot for optimization history
+n_history <- ex$n_history
+plot(n_history,
+  cex = 0.5,
+  ylim = c(min(n_history) - 10, max(n_history))
+)
+lines(n_history)
+abline(h = min(n_history), col = 3)
+
+```
+
