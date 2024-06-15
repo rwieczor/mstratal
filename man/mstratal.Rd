@@ -12,7 +12,7 @@ mstratal(
   opt_alg = "subplex",
   p_min = 0.1,
   p_max = 0.9,
-  maxit1 = 50,
+  maxit1 = 10,
   maxit2 = 100,
   rel_tol = 0.01,
   min_size = 2,
@@ -29,10 +29,10 @@ mstratal(
 
 \item{method}{- string parameter, choice of algorithm for optimal allocation with given
 strata and box constraints (generalization of Neyman allocation),
-default metod="capacity" i.e. algoritm "Capacity Scaling"
-from the paper Friedrich, Münnich, Vries, Wagner (2015),
-other parameter could be method="rnabox", which uses algorithm "RNABOX"
-from the paper Wesolowski, Wieczorkowski, Wojciak (2024).}
+default metod="rnabox", which uses algorithm "RNABOX"
+from the paper Wesolowski, Wieczorkowski, Wojciak (2024),
+other parameter could be metod="capacity" i.e. algoritm "Capacity Scaling"
+from the paper Friedrich, Münnich, Vries, Wagner (2015).}
 
 \item{opt_alg}{- string parameter, choice of algorithm for numerical optimization
 can be: simplex for Nelder-Mead simplex, or 'sublpex' for subplex algorithm}
@@ -43,18 +43,19 @@ power in cumulative power density rule (default 0.1)}
 \item{p_max}{- maximal value for search of optimal value of
 power in cumulative power density rule (default 0.9)}
 
-\item{maxit1}{- maximal number of iteration at first step of stratification,
+\item{maxit1}{- maximal number of iterations at first step of stratification,
 where optimal value of power in cumulative power density rule is found
-(default 20)}
+(default 10)}
 
-\item{maxit2}{- maximal number of iteration in second step of stratification, where
+\item{maxit2}{- maximal number of iterations in second step of stratification, where
 Nelder-Mead or subplex algorithm for minimization of objective function
 (default 100)}
 
 \item{rel_tol}{- relative tolerance, used as stopping rule in using sequentially
 selected optimization alorithm (default 0.01)}
 
-\item{min_size}{- minimal sample size in strata (default 2)}
+\item{min_size}{- minimal sample size in strata (default 2), if min_size < 1 then
+minimal sample fraction in strata}
 
 \item{verbose}{- if TRUE then diagnostic output is printed}
 

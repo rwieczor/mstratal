@@ -1,6 +1,6 @@
 Package: mstratal
 Title: Multivariate optimal stratification and allocation for stratified sampling scheme 
-Version: 1.00
+Version: 1.01
 Authors@R: person("Robert", "Wieczorkowski", email = "R.Wieczorkowski@stat.gov.pl", role = c("aut", "cre"))
 Description: Package can be used for computation of multivariate optimal stratification and allocation in stratified sampling.
    New numerical method is implemented for determination of the strata boundaries given the number of strata and target precision of estimation.  

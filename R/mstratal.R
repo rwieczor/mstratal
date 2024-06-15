@@ -81,7 +81,10 @@ rnabox2 <- function(V0, Nh, Sh, mh = NULL, Mh = NULL) {
 #' @export
 #'
 cumfp <- function(x, L, p) {
-  hst <- hist(x, plot = FALSE, nclass = nclass.FD)
+  hst <- graphics::hist(x,
+    plot = FALSE,
+    nclass = grDevices::nclass.FD
+  )
 
   mids <- hst$mids
   fy <- hst$dens
@@ -186,9 +189,6 @@ cumfp <- function(x, L, p) {
 al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   # count_alok <<- count_alok + 1 # global counter of function calls
 
-  require(matrixStats)
-  require(stratallo)
-
   big_nh <- 1e10
 
   jitter4gr <- function(x) {
@@ -216,15 +216,15 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
     #   grix <- c(min(xx[, i]), gri, max(xx[, i]))
     # }
 
-    if (length(unique(grix))<L+1) {
-      gri <- seq(min(xx[,i]),max(xx[,i]),length.out=L+1)
-      gri <- sort(gri)[2:(L-1)]
+    if (length(unique(grix)) < L + 1) {
+      gri <- seq(min(xx[, i]), max(xx[, i]), length.out = L + 1)
+      gri <- sort(gri)[2:(L - 1)]
     }
     h <- pmax(h, cut(xx[, i], c(min(xx[, i]), sort(gri), max(xx[, i])), include.lowest = TRUE, labels = FALSE))
   }
 
   # Xbar<-apply(xx,2,mean)
-  Xbar <- colMeans2(xx)
+  Xbar <- matrixStats::colMeans2(xx)
 
   Nh <- table(h)
   ## if (length(Nh) != L) cat("Too many strata L !","\n")
@@ -233,13 +233,13 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   }
 
   # Wh<-Nh/N
-  S2h <- aggregate(xx, by = list(h = h), FUN = function(x) {
-    colVars(matrix(x))
+  S2h <- stats::aggregate(xx, by = list(h = h), FUN = function(x) {
+    matrixStats::colVars(matrix(x))
   })
   names(S2h) <- c("h", paste0("S2", 1:ndim))
 
-  Xh <- aggregate(xx, by = list(h = h), FUN = function(x) {
-    colMeans2(matrix(x))
+  Xh <- stats::aggregate(xx, by = list(h = h), FUN = function(x) {
+    matrixStats::colMeans2(matrix(x))
   })
   names(Xh) <- c("h", paste0("X", 1:ndim))
 
@@ -249,9 +249,9 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   lo.str <- rep(min_size, L)
   if (min_size < 1) {
     # condition for minimal sample fraction in strata
-    lo.str <- round(min_size*Nh)
+    lo.str <- round(min_size * Nh)
   }
-  lo.str <- pmin(pmax(2,lo.str),Nh)
+  lo.str <- pmin(pmax(2, lo.str), Nh)
   lo.str[L] <- Nh[L]
 
   if (any(is.na(S2h))) {
@@ -404,8 +404,10 @@ mstratal <- function(xx, L, cc,
                      history = FALSE) {
   ndim <- ncol(xx)
 
-  lower<-NULL ;for (i in 1:ndim) lower[(1+(i-1)*(L-1)):(i*(L-1))]<-min(xx[,i])
-  upper<-NULL ;for (i in 1:ndim) upper[(1+(i-1)*(L-1)):(i*(L-1))]<-max(xx[,i])
+  lower <- NULL
+  for (i in 1:ndim) lower[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- min(xx[, i])
+  upper <- NULL
+  for (i in 1:ndim) upper[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- max(xx[, i])
 
   # method used in optimization for cumulative power rule
   # if (ndim == 1) method0 <- "Brent" else method0 <- "Nelder-Mead"
@@ -504,8 +506,10 @@ mstratal <- function(xx, L, cc,
 
       # gropt<-sort(gropt)
 
-      nhopt <- al_nh(gropt, xx, L, cc, cv = TRUE, method = method,
-                     min_size = min_size)
+      nhopt <- al_nh(gropt, xx, L, cc,
+        cv = TRUE, method = method,
+        min_size = min_size
+      )
       # break
       if (verbose) cat("Sample size from sequential subplex optimization = ", sum(nhopt), "\n")
       if (history) n_history <- c(n_history, sum(nhopt))
@@ -530,7 +534,7 @@ mstratal <- function(xx, L, cc,
 
   bh <- data.frame(bh)
   names(bh) <- paste0("bh", 1:ndim)
-  #bh <- cbind(bh, nh = nhopt)
+  # bh <- cbind(bh, nh = nhopt)
 
   if (history) {
     return(list(bh = bh, nh = nhopt, n_history = n_history))

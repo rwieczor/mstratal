@@ -23,7 +23,8 @@ Neyman optimal allocation formula taking into account lower an upper bounds for
 sample sizes in strata; method 'capacity' uses integer optimal allocation
 'CapacityScaling' algorithm from Friedrich et al. (2015) paper}
 
-\item{min_size}{- minimal sample size in strata (default 2)}
+\item{min_size}{- minimal sample size in strata (default 2); if min_size < 1 then minimal
+sample fraction in strata}
 }
 \value{
 numerical vector with optimal sample allocation in strata
