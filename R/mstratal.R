@@ -118,7 +118,7 @@ cumfp <- function(x, L, p) {
 #' @description Function for optimal sample allocation in L strata defined by boundaries
 #'
 #' @param gr - strata boundaries, as vector concatenated with (L-1) values for each variable
-#' @param xx - matrix with considered variables (in columns)
+#' @param data - matrix with considered variables (in columns)
 #' @param L - number of strata
 #' @param cc - vector of given coefficients of variation for stratification variables
 #' @param cv - if TRUE then coefficients of variations for variables for obtained allocations are printed
@@ -164,7 +164,7 @@ cumfp <- function(x, L, p) {
 #' cv <- 0.05 # coefficient of variation for estimators
 #' boundaries <- c(cumfp(dataxy[, 1], L, 0.5), cumfp(dataxy[, 2], L, 0.5))
 #' nh <- al_nh(boundaries, # strata boundaries
-#'   xx = dataxy,
+#'   data = dataxy,
 #'   L = L,
 #'   cc = c(cv, cv),
 #'   cv = TRUE,
@@ -174,7 +174,7 @@ cumfp <- function(x, L, p) {
 #' cat("Optimal sample size = ", sum(nh), "\n")
 #' #
 #' nh <- al_nh(boundaries,
-#'   xx = dataxy,
+#'   data = dataxy,
 #'   L = L,
 #'   cc = c(cv, cv),
 #'   cv = TRUE,
@@ -186,7 +186,7 @@ cumfp <- function(x, L, p) {
 #'
 #' @export
 #'
-al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
+al_nh <- function(gr, data, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   # count_alok <<- count_alok + 1 # global counter of function calls
 
   big_nh <- 1e10
@@ -202,29 +202,29 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   }
 
 
-  ndim <- ncol(xx)
-  N <- nrow(xx)
+  ndim <- ncol(data)
+  N <- nrow(data)
 
   h <- rep(1, N)
   for (i in 1:ndim)
   {
     gri <- gr[(1 + (i - 1) * (L - 1)):(i * (L - 1))]
-    grix <- c(min(xx[, i]), gri, max(xx[, i]))
-    # while (!identical(grix, unique(grix)) && (max(gri) < max(xx[, i]))) {
-    #   # gri <- runif(length(gri),min = min(xx[,i])+0.01 , max = max(xx[,i]*1.1))
+    grix <- c(min(data[, i]), gri, max(data[, i]))
+    # while (!identical(grix, unique(grix)) && (max(gri) < max(data[, i]))) {
+    #   # gri <- runif(length(gri),min = min(data[,i])+0.01 , max = max(data[,i]*1.1))
     #   gri <- jitter4gr(gri)
-    #   grix <- c(min(xx[, i]), gri, max(xx[, i]))
+    #   grix <- c(min(data[, i]), gri, max(data[, i]))
     # }
 
     if (length(unique(grix)) < L + 1) {
-      gri <- seq(min(xx[, i]), max(xx[, i]), length.out = L + 1)
+      gri <- seq(min(data[, i]), max(data[, i]), length.out = L + 1)
       gri <- sort(gri)[2:(L - 1)]
     }
-    h <- pmax(h, cut(xx[, i], c(min(xx[, i]), sort(gri), max(xx[, i])), include.lowest = TRUE, labels = FALSE))
+    h <- pmax(h, cut(data[, i], c(min(data[, i]), sort(gri), max(data[, i])), include.lowest = TRUE, labels = FALSE))
   }
 
-  # Xbar<-apply(xx,2,mean)
-  Xbar <- matrixStats::colMeans2(xx)
+  # Xbar<-apply(data,2,mean)
+  Xbar <- matrixStats::colMeans2(data)
 
   Nh <- table(h)
   ## if (length(Nh) != L) cat("Too many strata L !","\n")
@@ -233,12 +233,12 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
   }
 
   # Wh<-Nh/N
-  S2h <- stats::aggregate(xx, by = list(h = h), FUN = function(x) {
+  S2h <- stats::aggregate(data, by = list(h = h), FUN = function(x) {
     matrixStats::colVars(matrix(x))
   })
   names(S2h) <- c("h", paste0("S2", 1:ndim))
 
-  Xh <- stats::aggregate(xx, by = list(h = h), FUN = function(x) {
+  Xh <- stats::aggregate(data, by = list(h = h), FUN = function(x) {
     matrixStats::colMeans2(matrix(x))
   })
   names(Xh) <- c("h", paste0("X", 1:ndim))
@@ -300,7 +300,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #' Lednicki, Wieczorkowski (2003),  Friedrich et al. (2015), and
 #' Wesolowski, Wieczorkowski, Wojciak (2024)
 #'
-#' @param xx - matrix or data.frame with stratified numerical variables (in columns)
+#' @param data - matrix or data.frame with stratified numerical variables (in columns)
 #' @param L - number of strata
 #' @param cc - vector with given coefficients of variation for stratified variables
 #'
@@ -392,7 +392,7 @@ al_nh <- function(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2) {
 #' @export
 #'
 
-mstratal <- function(xx, L, cc,
+mstratal <- function(data, L, cc,
                      method = "rnabox",
                      opt_alg = "subplex",
                      p_min = 0.1, p_max = 0.9,
@@ -403,14 +403,14 @@ mstratal <- function(xx, L, cc,
                      verbose = TRUE,
                      history = FALSE) {
 
-  xx <- apply(xx,2,as.double)
+  data <- apply(data,2,as.double)
 
-  ndim <- ncol(xx)
+  ndim <- ncol(data)
 
   lower <- NULL
-  for (i in 1:ndim) lower[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- min(xx[, i])
+  for (i in 1:ndim) lower[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- min(data[, i])
   upper <- NULL
-  for (i in 1:ndim) upper[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- max(xx[, i])
+  for (i in 1:ndim) upper[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- max(data[, i])
 
   # method used in optimization for cumulative power rule
   # if (ndim == 1) method0 <- "Brent" else method0 <- "Nelder-Mead"
@@ -419,11 +419,11 @@ mstratal <- function(xx, L, cc,
   if (verbose) cat("Initial powers in cumulative rule = ", p0, "\n")
 
   # gr0<-NULL
-  # for (i in 1:ndim) gr0<-c(gr0,cumfp(xx[,i],L,p0[i]))
+  # for (i in 1:ndim) gr0<-c(gr0,cumfp(data[,i],L,p0[i]))
   gr0 <- double(ndim * (L - 1))
-  for (i in 1:ndim) gr0[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(xx[, i], L, p0[i])
+  for (i in 1:ndim) gr0[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(data[, i], L, p0[i])
 
-  nh0 <- al_nh(gr0, xx, L, cc, method = method, min_size = min_size)
+  nh0 <- al_nh(gr0, data, L, cc, method = method, min_size = min_size)
   if (verbose) cat("Initial sample size   = ", sum(nh0), "\n")
 
   if (history) n_history <- sum(nh0)
@@ -432,10 +432,10 @@ mstratal <- function(xx, L, cc,
     # p0 <- optim(p0,
     p0 <- nloptr::neldermead(p0,
       function(r) {
-        # gr<-NULL ;for (i in 1:ndim) gr<-c(gr,cumfp(xx[,i],L,r[i]))
+        # gr<-NULL ;for (i in 1:ndim) gr<-c(gr,cumfp(data[,i],L,r[i]))
         gr <- double(ndim * (L - 1))
-        for (i in 1:ndim) gr[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(xx[, i], L, r[i])
-        sum(al_nh(gr, xx, L, cc, method = method, min_size = min_size))
+        for (i in 1:ndim) gr[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(data[, i], L, r[i])
+        sum(al_nh(gr, data, L, cc, method = method, min_size = min_size))
       },
       # method = method0,
       lower = rep(p_min, ndim), upper = rep(p_max, ndim),
@@ -445,10 +445,10 @@ mstratal <- function(xx, L, cc,
   } else if (opt_alg == "subplex") {
     p0 <- nloptr::sbplx(p0,
       function(r) {
-        # gr<-NULL ;for (i in 1:ndim) gr<-c(gr,cumfp(xx[,i],L,r[i]))
+        # gr<-NULL ;for (i in 1:ndim) gr<-c(gr,cumfp(data[,i],L,r[i]))
         gr <- double(ndim * (L - 1))
-        for (i in 1:ndim) gr[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(xx[, i], L, r[i])
-        sum(al_nh(gr, xx, L, cc, method = method, min_size = min_size))
+        for (i in 1:ndim) gr[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(data[, i], L, r[i])
+        sum(al_nh(gr, data, L, cc, method = method, min_size = min_size))
       },
       lower = rep(p_min, ndim), upper = rep(p_max, ndim),
       control = list(maxeval = maxit1)
@@ -459,30 +459,30 @@ mstratal <- function(xx, L, cc,
 
   if (verbose) cat("Optimal powers in cumulative rule = ", p0, "\n")
 
-  # gr0<-NULL ; for (i in 1:ndim) gr0<-c(gr0,cumfp(xx[,i],L,p0[i]))
-  for (i in 1:ndim) gr0[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(xx[, i], L, p0[i])
+  # gr0<-NULL ; for (i in 1:ndim) gr0<-c(gr0,cumfp(data[,i],L,p0[i]))
+  for (i in 1:ndim) gr0[(1 + (i - 1) * (L - 1)):(i * (L - 1))] <- cumfp(data[, i], L, p0[i])
 
-  nh0 <- al_nh(gr0, xx, L, cc, method = method, min_size = min_size)
+  nh0 <- al_nh(gr0, data, L, cc, method = method, min_size = min_size)
   if (verbose) cat("Sample size for optimal cumulative power rule   = ", sum(nh0), "\n")
 
   sumpop <- sum(nh0)
   if (history) n_history <- c(n_history, sumpop)
 
-  # gropt<-gr0; nhopt<-nh.nd1(gropt,xx,L,cc,cv=TRUE)
+  # gropt<-gr0; nhopt<-nh.nd1(gropt,data,L,cc,cv=TRUE)
 
   if (opt_alg == "simplex") {
     while (1) {
       # gropt <- optim(gr0, function(z) {
       gropt <- nloptr::neldermead(gr0, function(z) {
-        sum(al_nh(z, xx, L, cc, method = method, min_size = min_size))
+        sum(al_nh(z, data, L, cc, method = method, min_size = min_size))
       },
       lower = lower, upper = upper,
-      # gr = function(z) {pracma::grad(function(z) {sum( al_nh(z,xx,L,cc, method=method, min_size=min_size) )},z)},
+      # gr = function(z) {pracma::grad(function(z) {sum( al_nh(z,data,L,cc, method=method, min_size=min_size) )},z)},
       # method = "Nelder-Mead", control = list(maxit = maxit2),
       control = list(maxeval = maxit2)
       )$par
 
-      nhopt <- al_nh(gropt, xx, L, cc, cv = TRUE, method = method, min_size = min_size)
+      nhopt <- al_nh(gropt, data, L, cc, cv = TRUE, method = method, min_size = min_size)
       # break
       if (verbose) cat("Sample size from sequential simplex optimization = ", sum(nhopt), "\n")
       if (history) n_history <- c(n_history, sum(nhopt))
@@ -493,18 +493,18 @@ mstratal <- function(xx, L, cc,
       gr0 <- gropt
       sumpop <- sum(nhopt)
     }
-    nhopt <- al_nh(gropt, xx, L, cc, cv = TRUE, method = method, min_size = min_size)
+    nhopt <- al_nh(gropt, data, L, cc, cv = TRUE, method = method, min_size = min_size)
     if (verbose) cat("Final sample size from sequential simplex optimization = ", sum(nhopt), "\n")
     if (history) n_history <- c(n_history, sum(nhopt))
   } else if (opt_alg == "subplex") {
     while (1) {
       gropt <- nloptr::sbplx(gr0, function(z) {
-        sum(al_nh(z, xx, L, cc, method = method, min_size = min_size))
+        sum(al_nh(z, data, L, cc, method = method, min_size = min_size))
       },
       lower = lower, upper = upper,
       control = list(maxeval = maxit2)
       # gropt <- subplex::subplex(gr0, function(z) {
-      #    sum(al_nh(z, xx, L, cc, method = method, min_size = min_size))
+      #    sum(al_nh(z, data, L, cc, method = method, min_size = min_size))
       #  },
       # hessian = TRUE,
       # control = list(maxit = maxit2)
@@ -512,7 +512,7 @@ mstratal <- function(xx, L, cc,
 
       # gropt<-sort(gropt)
 
-      nhopt <- al_nh(gropt, xx, L, cc,
+      nhopt <- al_nh(gropt, data, L, cc,
         cv = TRUE, method = method,
         min_size = min_size
       )
@@ -525,7 +525,7 @@ mstratal <- function(xx, L, cc,
       gr0 <- gropt
       sumpop <- sum(nhopt)
     }
-    nhopt <- al_nh(gropt, xx, L, cc, cv = TRUE, method = method, min_size = min_size)
+    nhopt <- al_nh(gropt, data, L, cc, cv = TRUE, method = method, min_size = min_size)
     if (verbose) cat("Final sample size from sequential subplex optimization = ", sum(nhopt), "\n")
     if (history) n_history <- c(n_history, sum(nhopt))
   } else {
@@ -536,7 +536,7 @@ mstratal <- function(xx, L, cc,
   bh <- matrix(0, L, ndim)
 
   for (i in 1:ndim) bh[1:(L - 1), i] <- sort(gropt[(1 + (i - 1) * (L - 1)):(i * (L - 1))])
-  bh[L, ] <- apply(xx, 2, max)
+  bh[L, ] <- apply(data, 2, max)
 
   bh <- data.frame(bh)
   names(bh) <- paste0("bh", 1:ndim)

@@ -5,7 +5,7 @@
 \title{Multivariate optimal stratification and allocation}
 \usage{
 mstratal(
-  xx,
+  data,
   L,
   cc,
   method = "rnabox",
@@ -21,7 +21,7 @@ mstratal(
 )
 }
 \arguments{
-\item{xx}{- matrix or data.frame with stratified numerical variables (in columns)}
+\item{data}{- matrix or data.frame with stratified numerical variables (in columns)}
 
 \item{L}{- number of strata}
 

@@ -4,12 +4,12 @@
 \alias{al_nh}
 \title{Optimal sample allocation for given strata}
 \usage{
-al_nh(gr, xx, L, cc, cv = FALSE, method = "rnabox", min_size = 2)
+al_nh(gr, data, L, cc, cv = FALSE, method = "rnabox", min_size = 2)
 }
 \arguments{
 \item{gr}{- strata boundaries, as vector concatenated with (L-1) values for each variable}
 
-\item{xx}{- matrix with considered variables (in columns)}
+\item{data}{- matrix with considered variables (in columns)}
 
 \item{L}{- number of strata}
 
@@ -54,7 +54,7 @@ L <- 3 # number of strata
 cv <- 0.05 # coefficient of variation for estimators
 boundaries <- c(cumfp(dataxy[, 1], L, 0.5), cumfp(dataxy[, 2], L, 0.5))
 nh <- al_nh(boundaries, # strata boundaries
-  xx = dataxy,
+  data = dataxy,
   L = L,
   cc = c(cv, cv),
   cv = TRUE,
@@ -64,7 +64,7 @@ cat("Optimal sample allocation for given strata = ", nh, "\n")
 cat("Optimal sample size = ", sum(nh), "\n")
 #
 nh <- al_nh(boundaries,
-  xx = dataxy,
+  data = dataxy,
   L = L,
   cc = c(cv, cv),
   cv = TRUE,
