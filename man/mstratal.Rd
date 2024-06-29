@@ -29,13 +29,13 @@ mstratal(
 
 \item{method}{- string parameter, choice of algorithm for optimal allocation with given
 strata and box constraints (generalization of Neyman allocation),
-default metod="rnabox", which uses algorithm "RNABOX"
+default method="rnabox", which uses algorithm "RNABOX"
 from the paper Wesolowski, Wieczorkowski, Wojciak (2024),
-other parameter could be metod="capacity" i.e. algoritm "Capacity Scaling"
+other parameter could be method="capacity" i.e. algoritm "Capacity Scaling"
 from the paper Friedrich, Münnich, Vries, Wagner (2015).}
 
 \item{opt_alg}{- string parameter, choice of algorithm for numerical optimization
-can be: simplex for Nelder-Mead simplex, or 'sublpex' for subplex algorithm}
+can be: simplex for Nelder-Mead simplex, or 'subplpex' for subplex algorithm}
 
 \item{p_min}{- minimal value for search of optimal value of
 power in cumulative power density rule (default 0.1)}
