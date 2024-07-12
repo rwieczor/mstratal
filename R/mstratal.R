@@ -284,7 +284,9 @@ al_nh <- function(gr, data, L, cc, cv = FALSE, method = "rnabox",
     cvout <- double(ndim)
     for (i in 1:ndim)
     {
-      cvout[i] <- (sqrt(sum((Nh / nh) * (Nh - nh) * S2h[, i + 1])) / (N * Xbar[i]))
+      if (is.null(ratio)) {
+         cvout[i] <- (sqrt(sum((Nh / nh) * (Nh - nh) * S2h[, i + 1])) / (N * Xbar[i]))
+      } else cvout[i] <- (sqrt(sum((Nh / nh) * (Nh - nh) * S2h[, i + 1])) / ratio)
     }
 
     cat("\nCVs for stratification variables = ", round(cvout, 4), "\n")
