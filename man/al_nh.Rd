@@ -4,12 +4,23 @@
 \alias{al_nh}
 \title{Optimal sample allocation for given strata}
 \usage{
-al_nh(gr, data, cc, cv = FALSE, method = "rnabox", min_size = 2, ratio = NULL)
+al_nh(
+  gr,
+  data,
+  L,
+  cc,
+  cv = FALSE,
+  method = "rnabox",
+  min_size = 2,
+  ratio = NULL
+)
 }
 \arguments{
 \item{gr}{- strata boundaries, as vector concatenated with (L-1) values for each variable}
 
 \item{data}{- matrix with considered variables (in columns)}
+
+\item{L}{- number of strata}
 
 \item{cc}{- vector of given coefficients of variation for stratification variables}
 
@@ -26,8 +37,6 @@ sample fraction in strata}
 
 \item{ratio}{- estimates for ratios, used when stratified variables
 are given after linearization}
-
-\item{L}{- number of strata}
 }
 \value{
 numerical vector with optimal sample allocation in strata

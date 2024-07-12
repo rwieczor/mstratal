@@ -188,7 +188,7 @@ cumfp <- function(x, L, p) {
 #'
 #' @export
 #'
-al_nh <- function(gr, data, cc, cv = FALSE, method = "rnabox",
+al_nh <- function(gr, data, L, cc, cv = FALSE, method = "rnabox",
                   min_size = 2, ratio = NULL) {
   # count_alok <<- count_alok + 1 # global counter of function calls
 
