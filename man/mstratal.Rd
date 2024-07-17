@@ -8,6 +8,7 @@ mstratal(
   data,
   L,
   cc,
+  takeall = TRUE,
   method = "rnabox",
   opt_alg = "subplex",
   p_min = 0.1,
@@ -18,7 +19,7 @@ mstratal(
   min_size = 2,
   verbose = TRUE,
   history = FALSE,
-  ratio = NULL
+  ratios = NULL
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ mstratal(
 \item{L}{- number of strata}
 
 \item{cc}{- vector with given coefficients of variation for stratified variables}
+
+\item{takeall}{- if TRUE take-all stratum is used (default)}
 
 \item{method}{- string parameter, choice of algorithm for optimal allocation with given
 strata and box constraints (generalization of Neyman allocation),
@@ -63,7 +66,7 @@ minimal sample fraction in strata}
 \item{history}{- if TRUE then output contains list of sample sizes
 from consecutive generations of algorithm}
 
-\item{ratio}{- estimates for ratios, used when stratified variables
+\item{ratios}{- estimates for ratios, used when stratified variables
 are given after linearization}
 }
 \value{

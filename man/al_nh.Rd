@@ -9,10 +9,11 @@ al_nh(
   data,
   L,
   cc,
+  takeall = TRUE,
   cv = FALSE,
   method = "rnabox",
   min_size = 2,
-  ratio = NULL
+  ratios = NULL
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ al_nh(
 \item{L}{- number of strata}
 
 \item{cc}{- vector of given coefficients of variation for stratification variables}
+
+\item{takeall}{- if TRUE take-all stratum is used (default)}
 
 \item{cv}{- if TRUE then coefficients of variations for variables for obtained allocations are printed}
 
@@ -35,7 +38,7 @@ sample sizes in strata; method 'capacity' uses integer optimal allocation
 \item{min_size}{- minimal sample size in strata (default 2); if min_size < 1 then minimal
 sample fraction in strata}
 
-\item{ratio}{- estimates for ratios, used when stratified variables
+\item{ratios}{- vector estimates for ratios, used when stratified variables
 are given after linearization}
 }
 \value{
