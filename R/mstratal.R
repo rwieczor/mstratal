@@ -11,7 +11,7 @@
 #' @param Mh - upper constraints for sample sizes in strata
 #'
 #' @return  vector of optimal allocation sizes, which can be rounded to
-#'     integers using functions: stratallo:ran_round or stratallo::round_oric
+#'     integers using functions: stratallo::ran_round or stratallo::round_oric
 #' @export
 #'
 #' @references

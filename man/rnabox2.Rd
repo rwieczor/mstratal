@@ -20,7 +20,7 @@ rnabox2(V0, Nh, Sh, mh = NULL, Mh = NULL)
 }
 \value{
 vector of optimal allocation sizes, which can be rounded to
-    integers using functions: stratallo:ran_round or stratallo::round_oric
+    integers using functions: stratallo::ran_round or stratallo::round_oric
 }
 \description{
 Modified recursive Neyman algorithm for optimal allocation in stratified sampling
