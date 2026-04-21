@@ -46,10 +46,10 @@ rnabox2 <- function(V0, Nh, Sh, mh = NULL, Mh = NULL) {
   Ah2 <- Ah^2
   nh <- stratallo::rnabox(
     n = V0 + sum(Ah * Sh), A = Ah,
-    bounds1 = Ah2 / mh,
-    bounds2 = Ah2 / Mh,
-    check_violations1 = .Primitive(">="), # RRNA variant
-    check_violations2 = .Primitive("<=")
+    bounds_inner = Ah2 / mh,
+    bounds_outer = Ah2 / Mh,
+    cmp_inner = .Primitive(">="), # RRNA variant
+    cmp_outer = .Primitive("<=")
   )
   nh <- Ah2 / nh
 
